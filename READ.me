@@ -1,0 +1,71 @@
+//obj aplicação
+  //criar dados
+    cliente: //class
+      nome
+      codigo
+      quantos que gasto no cartão
+
+    produto: //class
+      nome
+      codigo
+      preço
+      quantia
+
+    venda: //class
+      nome_cliente
+      codigo_cliente
+      produtos[]
+      total
+      tipo de pagamento
+
+  //guardar dados
+    data_base: //class
+      venda[]
+      produto[]
+      cliente[]
+
+// fluxo
+  0) debitar faturas
+    ver se é dia 1º
+
+  1) cadastrar novo cliente
+    nome
+      validar nome
+    criar novo cliente
+      add lista clientes
+
+  2) cadastrar novo produto
+    nome
+    preço
+      validar preço
+    quantia
+      validar quantia
+    criar novo item
+      add lista itens
+    criar novo produto
+      add lista produtos
+
+  3) cadastrar nova venda
+    codigo ou nome cliente
+    loop()
+      item
+      quantia comprada
+        validar se tem no estoque
+    tipo
+      modificar cliente
+    armazenar lista vendas
+
+  4) buscar cliente por codigo
+      mostrar na tela
+
+  5) modificar produto existente
+    encontrar por codigo
+    ver qual variavel mudar
+      validar
+        mudar
+
+  6) relatorio
+    criar um txt com clientes, vendas, e vendas por clientes
+    mostrar na tela
+
+  7) sair
