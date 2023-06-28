@@ -2,9 +2,9 @@
 #include <vector>
 #include <string>
 #include <functional>
-#include <variant>
 // #include <stdexcept>
-// #include <conio.h>
+#include <exception>
+#include <conio.h>
 
 using namespace std;
 
@@ -48,11 +48,11 @@ class Sell {
       name_c = x.name;
       code_c = x.code;
       purchases = y;
-
+ 
       for (int i = 0; i < y.size(); i++) {
         total += (y[i].first.price * y[i].second);
       };
-
+ 
       payment = z;
     }
 };
@@ -96,33 +96,37 @@ vector<pair<Item, int>> getPurchases(DB& my_db) {
   string addMore = "S"; int amount; int query_product; vector<pair<Item, int>> purchases;
   
   while (addMore == "s" || addMore == "S") {
-    cout << "\n\nProdutos cadastrados: \n";
+    try {
+      cout << "\n\nProdutos cadastrados: \n";
 
-    for (int i = 0; i < my_db.products.size(); i++) {
-      cout << "  -Nome: "<< my_db.products[i].name
-           << "  -Código: " << my_db.products[i].code
-           << "  -Quantia: " << my_db.products[i].amount
-           << "  -Preço: " << my_db.products[i].price << " R$\n";
-    };
+      for (int i = 0; i < my_db.products.size(); i++) {
+        cout << "  -Nome: "<< my_db.products[i].name
+            << "  -Código: " << my_db.products[i].code
+            << "  -Quantia: " << my_db.products[i].amount
+            << "  -Preço: " << my_db.products[i].price << " R$\n";
+      };
 
-    cout << "\nCódigo do produto: ";
-    cin >> query_product;
+      cout << "\nCódigo do produto: ";
+      cin >> query_product;
 
-    cout << "\nQuantia do produto: ";
-    cin >> amount;
+      cout << "\nQuantia do produto: ";
+      cin >> amount;
 
-    if (amount > my_db.products[query_product].amount) {
-      cout << "\n\nQuantia de produtos no estoque é insuficiente, produto não adicionado";
-    } else {
-        my_db.products[query_product].amount -= amount;
-        cout << "\n\nProduto adicionado com sucesso";
+      if (amount > my_db.products[query_product].amount) {
+        cout << "\n\nQuantia de produtos no estoque é insuficiente, produto não adicionado";
+      } else {
+          my_db.products[query_product].amount -= amount;
+          cout << "\n\nProduto adicionado com sucesso";
 
-        Item newItem(my_db.products[query_product]);
-        purchases.push_back( { newItem, amount } );
-    };
+          Item newItem(my_db.products[query_product]);
+          purchases.push_back( { newItem, amount } );
+      };
 
-    cout << "\nPara adicionar mais produtos, digite S: ";
-    cin >> addMore;
+      cout << "\nPara adicionar mais produtos, digite S: ";
+      cin >> addMore;
+    } catch (exception& e) {
+      cout << "Valor incorreto, ou produto não encontrado";
+    }
   };
   return purchases;
 };
@@ -138,12 +142,9 @@ void chose_option_msg() {
   cout << " - 7 Sair" << "\n\n";
   cout << "Opção: ";
 
-  // cin >> option;
+  cin >> option;
 
-  if (option < 0 || option > 7) {
-    cout << "\nOpção invalida, tente novamente\n\n";
-    option = 0;
-  };
+  if (option < 0 || option > 7) { throw out_of_range(); };
 };
 
 void createUser(DB& my_db) {
@@ -164,6 +165,8 @@ void createProduct(DB& my_db) {
 
   cout << "\n\nDigite o preço (maior que 0): ";
   cin >> price;
+
+  if (price <= 0) { throw out_of_range(); };
 
   cout << "\n\nDigite a quantia de itens presente no estoque: ";
   cin >> amount;
@@ -199,17 +202,15 @@ void updateProduct(DB& my_db) {
 
   cin >> toChange;
 
+  cout << "\n\nDigite o novo valor: ";
+
   if (toChange == 1) {
-    cout << "\n\nDigite o novo valor para nome: ";
     cin >> name;
-    name = "biba";
     my_db.products[query_product].name = name;
   } else if (toChange == 2) {
-    cout << "\n\nDigite o novo valor para preço: ";
     cin >> price;
     my_db.products[query_product].price = price;
   } else {
-    cout << "\n\nDigite o novo valor para quantia: ";
     cin >> amount;
     my_db.products[query_product].amount = amount;
   }
@@ -232,27 +233,13 @@ int main() {
   flow.push_back(getReport);
 
   while(option != 7) {
-    // chose_option_msg();
-    // flow[option - 1](my_db);
-
-    Product produto_1("produto1", 3.5, 10);
-    my_db.products.push_back(produto_1);
-    Product produto_2("produto2", 5, 20);
-    my_db.products.push_back(produto_2);
-
-    Client client_1("gustavo");
-    my_db.clients.push_back(client_1);
-    Client client_2("a");
-    my_db.clients.push_back(client_2);
-    Client client_3("b");
-    my_db.clients.push_back(client_3);
-    Client client_4("c");
-    my_db.clients.push_back(client_4);
-    Client client_5("d");
-    my_db.clients.push_back(client_5);
-
-    flow[4](my_db);
-    option = 7;
+    try {
+      chose_option_msg();
+      flow[option - 1](my_db);
+    } catch(exception& e) {
+      cout << "Algum valor foi digitado incorretamente, tente novamente.";
+      option = 0;
+    };
   };
 
   return 0;
