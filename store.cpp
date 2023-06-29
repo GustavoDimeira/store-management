@@ -144,7 +144,7 @@ void chose_option_msg() {
 
   cin >> option;
 
-  if (option < 0 || option > 7) { throw out_of_range(); };
+  if (option < 1 || option > 7) { throw out_of_range(); };
 };
 
 void createUser(DB& my_db) {
